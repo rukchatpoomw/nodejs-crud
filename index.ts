@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { MongoClient, ObjectId } from 'mongodb';
 import { configDotenv } from 'dotenv';
 import { responseText } from './response';
+import { encryptedData } from './hash';
 configDotenv()
 
 const { DB_NAME, MONGO_URL } = process.env
@@ -51,6 +52,7 @@ app.get('/item/:id', async (req: Request, res: Response) => {
 app.get('/items', async (req: Request, res: Response) => {
     const db = client.db(DB_NAME);
     const items = await db.collection('items').find().toArray();
+    encryptedData(items)
     res.json(items);
 });
 
