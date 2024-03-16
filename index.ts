@@ -5,7 +5,8 @@ import { responseText } from './response';
 import { encryptedData } from './hash';
 configDotenv()
 
-const { DB_NAME, MONGO_URL, PORT, HASH_SECRET_KEY } = process.env
+const { MONGO_URL, PORT, HASH_SECRET_KEY } = process.env
+const DB_NAME = "test"
 
 const app = express();
 
@@ -76,7 +77,7 @@ app.put('/items/:id', async (req: Request, res: Response) => {
         const db = client.db(DB_NAME);
         const _id = new ObjectId(req.params.id);
         const updatedUser = req.body;
-        const result = await db.collection('items').updateOne({ _id }, { $set: updatedUser });
+        await db.collection('items').updateOne({ _id }, { $set: updatedUser });
         res.json(update);
     } catch (error) {
         res.status(400).json(noExistedId);

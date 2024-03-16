@@ -1,7 +1,6 @@
 import cryptoJS from "crypto-js"
 
 export function encryptedData(data: any, secretKey: string) {
-
     return cryptoJS.AES.encrypt(JSON.stringify(data), secretKey).toString()
 }
 
