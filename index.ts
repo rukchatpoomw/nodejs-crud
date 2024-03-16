@@ -76,12 +76,17 @@ app.put('/items/:id', async (req: Request, res: Response) => {
 
 });
 
-// app.delete('/items/:id', async (req: Request, res: Response) => {
-//     const db = client.db(DB_NAME);
-//     const userId = req.params.id;
-//     const result = await db.collection('items').deleteOne({ _id: userId });
-//     res.json({ message: 'User deleted successfully' });
-// });
+app.delete('/items/:id', async (req: Request, res: Response) => {
+    const { remove, noExistedId } = responseText
+    try {
+        const db = client.db(DB_NAME);
+        const _id = new ObjectId(req.params.id);
+        await db.collection('items').deleteOne({ _id });
+        res.json(remove);
+    } catch (error) {
+        res.json(noExistedId);
+    }
+});
 
 // Start the server
 app.listen(PORT, () => {

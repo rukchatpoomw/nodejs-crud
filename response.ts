@@ -7,9 +7,11 @@ export const responseText = {
         message: "Failed to insert data"
     },
     update: {
-        message: 'User updated successfully'
+        message: "document updated successfully"
     },
-
+    remove: {
+        message: "document deleted successfully"
+    },
     success: {
         message: "success",
     },
