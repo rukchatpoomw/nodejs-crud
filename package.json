@@ -2,7 +2,7 @@
   "name": "nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,10 +12,14 @@
   "dependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.27",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
     "mongodb": "^6.5.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.2"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2"
   }
 }

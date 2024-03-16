@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Condition, MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import { configDotenv } from 'dotenv';
 import { responseText } from './response';
 configDotenv()
