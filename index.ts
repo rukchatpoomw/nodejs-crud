@@ -4,10 +4,11 @@ import { configDotenv } from 'dotenv';
 import { responseText } from './response';
 configDotenv()
 
+const { DB_NAME, MONGO_URL } = process.env
 const app = express();
 const PORT = 3000;
-const MONGO_URL = process.env.MONGO_URL;
-const DB_NAME = 'test';
+// const MONGO_URL = process.env.MONGO_URL;
+// const DB_NAME = process.env.DB_NAME;
 
 // Connect to MongoDB
 let client: MongoClient;
