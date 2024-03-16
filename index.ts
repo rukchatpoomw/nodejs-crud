@@ -1,22 +1,24 @@
 import express, { Request, Response } from 'express';
-import { MongoClient, ObjectId } from 'mongodb';
+import { Document, MongoClient, ObjectId } from 'mongodb';
 import { configDotenv } from 'dotenv';
 import { responseText } from './response';
 import { encryptedData } from './hash';
 configDotenv()
 
-const { DB_NAME, MONGO_URL } = process.env
+const { DB_NAME, MONGO_URL, PORT, HASH_SECRET_KEY } = process.env
+
 const app = express();
-const PORT = 3000;
-// const MONGO_URL = process.env.MONGO_URL;
-// const DB_NAME = process.env.DB_NAME;
 
 // Connect to MongoDB
 let client: MongoClient;
+let secretKey: string;
 if (MONGO_URL) {
     client = new MongoClient(MONGO_URL);
 }
 
+if (HASH_SECRET_KEY) {
+    secretKey = HASH_SECRET_KEY;
+}
 async function start() {
     try {
         await client.connect();
@@ -51,8 +53,8 @@ app.get('/item/:id', async (req: Request, res: Response) => {
 
 app.get('/items', async (req: Request, res: Response) => {
     const db = client.db(DB_NAME);
-    const items = await db.collection('items').find().toArray();
-    encryptedData(items)
+    let items: string | Document = await db.collection('items').find().toArray();
+    items = encryptedData(items, secretKey)
     res.json(items);
 });
 
