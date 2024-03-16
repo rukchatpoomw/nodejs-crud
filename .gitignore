@@ -1,0 +1,23 @@
+# Dependency directories
+node_modules/
+package-lock.json
+# Environment variables file
+.env
+
+# TypeScript build output directory
+dist/
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+
+# Log files
+*.log
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
