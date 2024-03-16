@@ -17,5 +17,8 @@ export const responseText = {
     },
     noExistedId: {
         message: "No existed id in documents"
+    },
+    error: {
+        message: "Something went wrong"
     }
 }

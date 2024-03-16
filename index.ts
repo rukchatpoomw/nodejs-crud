@@ -7,7 +7,7 @@ configDotenv()
 
 const { MONGO_URL, PORT, HASH_SECRET_KEY } = process.env
 const DB_NAME = "test"
-
+const collectionName = "items"
 const app = express();
 
 // Connect to MongoDB
@@ -40,7 +40,7 @@ app.get('/item/:id', async (req: Request, res: Response) => {
     try {
         const db = client.db(DB_NAME);
         const _id = new ObjectId(req.params.id)
-        const items = await db.collection('items').findOne({ _id })
+        const items = await db.collection(collectionName).findOne({ _id })
         if (items?._id) {
             res.json({ ...success, data: [items] });
         } else {
@@ -54,7 +54,7 @@ app.get('/item/:id', async (req: Request, res: Response) => {
 
 app.get('/items', async (req: Request, res: Response) => {
     const db = client.db(DB_NAME);
-    let items: string | Document = await db.collection('items').find().toArray();
+    let items: string | Document = await db.collection(collectionName).find().toArray();
     items = encryptedData(items, secretKey)
     res.json(items);
 });
@@ -64,7 +64,7 @@ app.post('/item', async (req: Request, res: Response) => {
     try {
         const db = client.db(DB_NAME);
         const newUser = req.body;
-        const result = await db.collection('items').insertOne(newUser);
+        const result = await db.collection(collectionName).insertOne(newUser);
         res.json({ ...insert, documentId: result.insertedId });
     } catch {
         res.status(400).json(notInsert);
@@ -77,7 +77,7 @@ app.put('/items/:id', async (req: Request, res: Response) => {
         const db = client.db(DB_NAME);
         const _id = new ObjectId(req.params.id);
         const updatedUser = req.body;
-        await db.collection('items').updateOne({ _id }, { $set: updatedUser });
+        await db.collection(collectionName).updateOne({ _id }, { $set: updatedUser });
         res.json(update);
     } catch (error) {
         res.status(400).json(noExistedId);
@@ -90,11 +90,38 @@ app.delete('/items/:id', async (req: Request, res: Response) => {
     try {
         const db = client.db(DB_NAME);
         const _id = new ObjectId(req.params.id);
-        await db.collection('items').deleteOne({ _id });
+        await db.collection(collectionName).deleteOne({ _id });
         res.json(remove);
     } catch (error) {
         res.status(400).json(noExistedId);
     }
+});
+
+// Define your MongoDB aggregation pipeline stages
+const aggregationPipeline = [
+    {
+        $group: {
+            _id: '$discount',
+            totalItems: { $sum: 1 },
+            totalPrice: { $sum: '$price' }
+        }
+    },
+    {
+        $sort: { total: -1 }
+    }
+];
+
+app.get('/aggregate', async (req: Request, res: Response) => {
+    const { error } = responseText
+    try {
+        const db = client.db(DB_NAME)
+        const result = await db.collection(collectionName).aggregate(aggregationPipeline).toArray();
+        console.log(result)
+        res.json(result)
+    } catch {
+        res.status(400).json(error)
+    }
+
 });
 
 // Start the server
