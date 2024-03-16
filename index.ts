@@ -32,14 +32,18 @@ app.use(express.json());
 
 // Routes
 app.get('/item/:id', async (req: Request, res: Response) => {
-    const { success, noExistedId } = responseText
+    const { success, noExistedId } = responseText;
     try {
         const db = client.db(DB_NAME);
         const _id = new ObjectId(req.params.id)
         const items = await db.collection('items').findOne({ _id })
-        res.json({ ...success, data: [items] });
+        if (items?._id) {
+            res.json({ ...success, data: [items] });
+        } else {
+            throw new Error();
+        }
     } catch (error) {
-        res.json(noExistedId)
+        res.status(400).json(noExistedId);
     }
 
 });
@@ -51,14 +55,14 @@ app.get('/items', async (req: Request, res: Response) => {
 });
 
 app.post('/item', async (req: Request, res: Response) => {
-    const { insert, notInsert } = responseText
+    const { insert, notInsert } = responseText;
     try {
         const db = client.db(DB_NAME);
         const newUser = req.body;
         const result = await db.collection('items').insertOne(newUser);
-        res.json({ ...insert, documentId: result.insertedId })
+        res.json({ ...insert, documentId: result.insertedId });
     } catch {
-        res.json(notInsert)
+        res.status(400).json(notInsert);
     }
 });
 
@@ -71,7 +75,7 @@ app.put('/items/:id', async (req: Request, res: Response) => {
         const result = await db.collection('items').updateOne({ _id }, { $set: updatedUser });
         res.json(update);
     } catch (error) {
-        res.json(noExistedId);
+        res.status(400).json(noExistedId);
     }
 
 });
@@ -84,7 +88,7 @@ app.delete('/items/:id', async (req: Request, res: Response) => {
         await db.collection('items').deleteOne({ _id });
         res.json(remove);
     } catch (error) {
-        res.json(noExistedId);
+        res.status(400).json(noExistedId);
     }
 });
 
